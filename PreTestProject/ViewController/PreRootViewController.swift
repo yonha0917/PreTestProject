@@ -10,6 +10,8 @@ import UIKit
 
 class PreRootViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
+    let detailInfoSegueIdentifier = "ShowDetailInfo"
+    let requestListInfoURL = "https://itunes.apple.com/kr/rss/topfreeapplications/limit=50/genre=6015/json"
     var dataManager : DataManager!
     
     @IBOutlet weak var navigationItems: UINavigationItem!
@@ -18,17 +20,11 @@ class PreRootViewController: UIViewController, UITableViewDelegate, UITableViewD
     var naviTitle : String?
     var tableItems : [Any] = []
     
-    override func viewDidLayoutSubviews(){
-        super.viewDidLayoutSubviews()
-        self.navigationItems.title = naviTitle
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        self.dataManager = DataManager.init()
         loadData()
-        
-        
     }
     
     override func didReceiveMemoryWarning() {
@@ -36,39 +32,37 @@ class PreRootViewController: UIViewController, UITableViewDelegate, UITableViewD
         // Dispose of any resources that can be recreated.
     }
     
-    func loadData() {
-        dataManager = DataManager.init()
-        dataManager.requestJsonDataFromURL(urlString:"https://itunes.apple.com/kr/rss/topfreeapplications/limit=50/genre=6015/json",
-                                           successClosure: {
-                                            (data) in
-                                            guard let feed = data?["feed"] as? [String:Any],
-                                                let title = feed["title"] as? [String:Any],
-                                                let label = title["label"] as? String,
-                                                let entry = feed["entry"] as? [Any]
-                                            else {
-                                                return
-                                            }
-                                            print(label)
-                                            self.naviTitle = label;
-                                            self.tableItems = entry;
-                                            
-                                            DispatchQueue.main.async() { () -> Void in
-                                                self.tableView.reloadData()
-                                            }
-                                            
-        },
-                                           faileClosure:{
-                                            (error) in
-                                            print(error.debugDescription)
-                                            
-        })
-    }
+    // MARK: - 금융카테고리 50위 까지 리스트 호출
     
-    func getDataFromUrl(url: URL, completion: @escaping (_ data: Data?, _  response: URLResponse?, _ error: Error?) -> Void) {
-        URLSession.shared.dataTask(with: url) {
-            (data, response, error) in
-            completion(data, response, error)
-            }.resume()
+    func loadData() {
+        self.dataManager.requestJsonDataFromURL(urlString:self.requestListInfoURL, successClosure: {
+            (data) in
+            guard let feed = data?["feed"] as? [String:Any],
+                let title = feed["title"] as? [String:Any],
+                let label = title["label"] as? String,
+                let entry = feed["entry"] as? [Any]
+                else {
+                    return
+                }
+            self.naviTitle = label;
+            self.tableItems = entry;
+            DispatchQueue.main.async() { () -> Void in
+                self.navigationItems.title = self.naviTitle
+                self.tableView.reloadData()
+            }
+                                            
+        }, faileClosure:{
+            (errorString) in
+            let alert = UIAlertController(title:"에러발생!", message:errorString, preferredStyle: UIAlertControllerStyle.alert)
+            let action = UIAlertAction(title: "확인", style: UIAlertActionStyle.cancel, handler: {
+                (action: UIAlertAction!) in
+               
+            })
+            alert.addAction(action)
+            DispatchQueue.main.async() { () -> Void in
+                self.present(alert, animated: true, completion: nil)
+            }
+        })
     }
     
     // MARK: - UITableViewDataSource
@@ -90,13 +84,22 @@ class PreRootViewController: UIViewController, UITableViewDelegate, UITableViewD
 
         
         cell.itemTitle.text = label
-        let url = URL(string: urlImage);
-        getDataFromUrl(url: url!) { (data, response, error)  in
-            guard let data = data, error == nil else { return }
+        self.dataManager.requestDataFromURL(urlString: urlImage, successClosure: {
+            (data) in
+            guard let data = data
+                else {
+                    return
+            }
             DispatchQueue.main.async() { () -> Void in
                 cell.itemIconImage.image = UIImage(data: data)
             }
-        }
+
+        }, faileClosure: {
+            (errorString) in
+            print(errorString)
+            
+        })
+
         cell.itemRanking.text = String(indexPath.row + 1)
         return cell
     }
@@ -108,14 +111,28 @@ class PreRootViewController: UIViewController, UITableViewDelegate, UITableViewD
     // MARK: - UITableViewDelegate
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("タップされたセルのindex番号: \(indexPath.row)")
-    }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 60
+//        print("タップされたセルのindex番号: \(indexPath.row)")
     }
     
     func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
-        print("タップされたアクセサリがあるセルのindex番号: \(indexPath.row)")
+//        print("タップされたアクセサリがあるセルのindex番号: \(indexPath.row)")
+    }
+    
+    // MARK: - segue prepare method
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if (segue.identifier == self.detailInfoSegueIdentifier) {
+            
+            guard let item = self.tableItems[(self.tableView.indexPathForSelectedRow?.row)!] as? [String : Any],
+                let id = item["id"] as? [String:Any],
+                let attributes = id["attributes"] as? [String:Any],
+                let appID = attributes["im:id"] as? String
+                else {
+                    return
+            }
+            
+            let destination = segue.destination as? PreDetailViewController
+            destination?.appID = appID;
+        }
     }
 }

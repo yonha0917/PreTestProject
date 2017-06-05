@@ -15,6 +15,7 @@
 		9310847B1EE3FB110087CAE3 /* PreNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 931084781EE3FB110087CAE3 /* PreNavigationController.swift */; };
 		9310847C1EE3FB110087CAE3 /* PreRootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 931084791EE3FB110087CAE3 /* PreRootViewController.swift */; };
 		935FAD4E1EE3B70B000479DA /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 935FAD4D1EE3B70B000479DA /* DataManager.swift */; };
+		9E463FC41EE53DB0003EAFF5 /* PreDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E463FC31EE53DB0003EAFF5 /* PreDetailViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +29,7 @@
 		931084781EE3FB110087CAE3 /* PreNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreNavigationController.swift; sourceTree = "<group>"; };
 		931084791EE3FB110087CAE3 /* PreRootViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreRootViewController.swift; sourceTree = "<group>"; };
 		935FAD4D1EE3B70B000479DA /* DataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
+		9E463FC31EE53DB0003EAFF5 /* PreDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreDetailViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,6 +87,7 @@
 			children = (
 				931084781EE3FB110087CAE3 /* PreNavigationController.swift */,
 				931084791EE3FB110087CAE3 /* PreRootViewController.swift */,
+				9E463FC31EE53DB0003EAFF5 /* PreDetailViewController.swift */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -163,6 +166,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				935FAD4E1EE3B70B000479DA /* DataManager.swift in Sources */,
+				9E463FC41EE53DB0003EAFF5 /* PreDetailViewController.swift in Sources */,
 				9310847A1EE3FB110087CAE3 /* TableViewItemCell.swift in Sources */,
 				930A78971EE3A0EA00040775 /* AppDelegate.swift in Sources */,
 				9310847B1EE3FB110087CAE3 /* PreNavigationController.swift in Sources */,
@@ -289,7 +293,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = 2T3F9LVAJT;
 				INFOPLIST_FILE = PreTestProject/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.yonhakim.PreTestProject;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -305,7 +309,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = 2T3F9LVAJT;
 				INFOPLIST_FILE = PreTestProject/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.yonhakim.PreTestProject;
 				PRODUCT_NAME = "$(TARGET_NAME)";

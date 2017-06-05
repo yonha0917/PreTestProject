@@ -14,11 +14,11 @@ class DataManager : NSObject {
         super.init()
     }
 
-    func requestJsonDataFromURL(urlString:NSString, successClosure:@escaping ([String: Any]?) -> Void, faileClosure: @escaping (String?) -> Void) {
-        let url = NSURL(string: urlString as String)!
-        let request = NSMutableURLRequest(url: url as URL)
+    func requestJsonDataFromURL(urlString:String, successClosure:@escaping ([String: Any]?) -> Void, faileClosure: @escaping (String?) -> Void) {
+        let url = URL(string: urlString)!
+        let request = URLRequest(url: url)
         let urlSession = URLSession.shared
-        let task = urlSession.dataTask(with: request as URLRequest) {
+        let task = urlSession.dataTask(with: request) {
             (data, response, error) in
             if (error == nil) {
                 var jsonData : [String: Any]?
@@ -36,6 +36,21 @@ class DataManager : NSObject {
             }
         }
 
+        task.resume()
+    }
+    
+    func requestDataFromURL(urlString: String, successClosure: @escaping (Data?) -> Void, faileClosure: @escaping (String?) -> Void) {
+        let url = URL(string: urlString)!
+        let request = URLRequest(url: url)
+        let urlSession = URLSession.shared
+        let task = urlSession.dataTask(with: request) {
+            (data, response, error) in
+            if (error == nil) {
+                successClosure(data)
+            } else {
+                faileClosure(error?.localizedDescription)
+            }
+        }
         task.resume()
     }
 }

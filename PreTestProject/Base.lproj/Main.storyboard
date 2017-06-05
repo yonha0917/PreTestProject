@@ -4,7 +4,6 @@
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12088"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -13,7 +12,7 @@
         <scene sceneID="tmc-zg-mKj">
             <objects>
                 <viewController id="aRM-cL-wGC" customClass="PreRootViewController" customModule="PreTestProject" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="121" sectionHeaderHeight="28" sectionFooterHeight="28" id="HaX-we-5iH">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="60" sectionHeaderHeight="28" sectionFooterHeight="28" id="HaX-we-5iH">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -26,7 +25,7 @@
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="59.5"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <subviews>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fxP-FB-gDw">
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="title" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fxP-FB-gDw">
                                             <rect key="frame" x="106" y="2" width="234" height="57"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="57" id="ghy-tB-MbC"/>
@@ -67,6 +66,7 @@
                                     <outlet property="itemIconImage" destination="XiM-Fn-qrD" id="ZJp-YR-HhH"/>
                                     <outlet property="itemRanking" destination="oKD-ub-YfD" id="Arn-Xw-mxF"/>
                                     <outlet property="itemTitle" destination="fxP-FB-gDw" id="EVB-Et-a7v"/>
+                                    <segue destination="hcL-Dl-3Nc" kind="show" identifier="ShowDetailInfo" id="1Gp-uT-ZOV"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -83,7 +83,25 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="8QI-ez-e23" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="229.59999999999999" y="-155.17241379310346"/>
+            <point key="canvasLocation" x="159" y="-155"/>
+        </scene>
+        <!--Pre Detail View Controller-->
+        <scene sceneID="DdX-la-eHt">
+            <objects>
+                <viewController id="hcL-Dl-3Nc" customClass="PreDetailViewController" customModule="PreTestProject" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="Adn-hZ-Qe2"/>
+                        <viewControllerLayoutGuide type="bottom" id="PCm-mO-cM2"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="StA-uD-sAH">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="RWt-2q-QIE" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="922" y="-155"/>
         </scene>
         <!--Pre Navigation Controller-->
         <scene sceneID="9vS-Zg-PIv">
