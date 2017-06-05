@@ -118,6 +118,14 @@ class PreRootViewController: UIViewController, UITableViewDelegate, UITableViewD
 //        print("タップされたアクセサリがあるセルのindex番号: \(indexPath.row)")
     }
     
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        print("willDisplay : \(indexPath.row)")
+    }
+    
+    func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        print("didEndDisplaying : \(indexPath.row)")
+    }
+    
     // MARK: - segue prepare method
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
