@@ -64,15 +64,15 @@
 		930A78951EE3A0EA00040775 /* PreTestProject */ = {
 			isa = PBXGroup;
 			children = (
-				93EE1D5D1EE64846003DD066 /* image */,
 				930A78961EE3A0EA00040775 /* AppDelegate.swift */,
+				935FAD4D1EE3B70B000479DA /* DataManager.swift */,
+				93EE1D5D1EE64846003DD066 /* image */,
 				931084751EE3FB110087CAE3 /* CustomView */,
 				931084771EE3FB110087CAE3 /* ViewController */,
 				930A789A1EE3A0EA00040775 /* Main.storyboard */,
 				930A789D1EE3A0EA00040775 /* Assets.xcassets */,
 				930A789F1EE3A0EA00040775 /* LaunchScreen.storyboard */,
 				930A78A21EE3A0EA00040775 /* Info.plist */,
-				935FAD4D1EE3B70B000479DA /* DataManager.swift */,
 			);
 			path = PreTestProject;
 			sourceTree = "<group>";
@@ -309,8 +309,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.yonhakim.PreTestProject;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "3d3072e1-fb83-48a1-bef1-96aa2811a4a4";
-				PROVISIONING_PROFILE_SPECIFIER = sbi_wildcard_profile;
+				PROVISIONING_PROFILE = "83c265b4-c0ce-4f82-8c35-f93d63a6709e";
+				PROVISIONING_PROFILE_SPECIFIER = DEV_Wildcard_AppID;
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
@@ -325,8 +325,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.yonhakim.PreTestProject;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "3d3072e1-fb83-48a1-bef1-96aa2811a4a4";
-				PROVISIONING_PROFILE_SPECIFIER = sbi_wildcard_profile;
+				PROVISIONING_PROFILE = "83c265b4-c0ce-4f82-8c35-f93d63a6709e";
+				PROVISIONING_PROFILE_SPECIFIER = DEV_Wildcard_AppID;
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;

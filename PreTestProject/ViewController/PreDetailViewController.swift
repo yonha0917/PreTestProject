@@ -2,7 +2,7 @@
 //  PreDetailViewController.swift
 //  PreTestProject
 //
-//  Created by sbi on 2017. 6. 5..
+//  Created by よんは きむ on 2017. 6. 5..
 //  Copyright © 2017년 yonha kim. All rights reserved.
 //
 
@@ -10,26 +10,37 @@ import UIKit
 
 class PreDetailViewController : UIViewController,  UITableViewDelegate, UITableViewDataSource {
     public var appID : String!
+    
+    let TABLE_CELL_00_APP_TITLE : Int = 0
+    let TABLE_CELL_01_APP_SCREENSHOTS : Int = 1
+    let TABLE_CELL_02_APP_DESCRIPTION : Int = 2
+    let TABLE_CELL_03_APP_RELEASENOTES : Int = 3
+    let TABLE_CELL_04_APP_INFO : Int = 4
+    let TABLE_CELL_05_APP_DEVELOPER_WEBSITE: Int = 5
+    let TABLE_CELL_06_APP_COPYRIGHT: Int = 6
+    
+    let FONT_SIZE : CGFloat = 13.0
+    
     let requestDetailInfoURL = "https://itunes.apple.com/lookup?id=%@&country=kr"
     var dataManager : DataManager!
     
-    @IBOutlet var tableView: UITableView!
+    var indicator: UIActivityIndicatorView!
     
-    @IBOutlet var scrollViewContents: UIScrollView!
+    @IBOutlet var tableView: UITableView!
     
     var dataAppInfo : [String : Any]?
     var heightSelectedCell02 : CGFloat = 125
     var heightSelectedCell03 : CGFloat = 125
     
+    var heightOpenSelectedCell02 : CGFloat = 0
+    var heightOpenSelectedCell03 : CGFloat = 0
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        initIndicator()
         self.dataManager = DataManager.init()
         loadData()
-    }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
     }
     
     override func didReceiveMemoryWarning() {
@@ -37,7 +48,30 @@ class PreDetailViewController : UIViewController,  UITableViewDelegate, UITableV
         // Dispose of any resources that can be recreated.
     }
     
+    // MARK: - IndicatorView init
+    func initIndicator() {
+        self.indicator = UIActivityIndicatorView()
+        self.indicator.frame = CGRect(x: 0, y: 0, width: 50, height: 50)
+        self.indicator.center = self.view.center
+        self.indicator.hidesWhenStopped = true
+        self.indicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.gray
+        self.view.addSubview(self.indicator)
+    }
+    
+    // MARK: - IndicatorView animating start
+    func startIndicator() {
+        self.indicator.startAnimating()
+    }
+    
+    // MARK: - IndicatorView animating stop
+    func stopIndicator() {
+        self.indicator.stopAnimating()
+    }
+
+    // MARK: - 어플리케이션 상세 정보 호출
+    
     func loadData() {
+        startIndicator()
         let urlString = String(format: self.requestDetailInfoURL, self.appID)
         print(urlString)
         self.dataManager.requestJsonDataFromURL(urlString:urlString, successClosure: {
@@ -51,6 +85,7 @@ class PreDetailViewController : UIViewController,  UITableViewDelegate, UITableV
             self.dataAppInfo = result
             DispatchQueue.main.async() { () -> Void in
                 self.tableView.reloadData()
+                self.stopIndicator()
             }
         }, faileClosure:{
             (errorString) in
@@ -61,6 +96,7 @@ class PreDetailViewController : UIViewController,  UITableViewDelegate, UITableV
             })
             alert.addAction(action)
             DispatchQueue.main.async() { () -> Void in
+                self.stopIndicator()
                 self.present(alert, animated: true, completion: nil)
             }
         })
@@ -69,7 +105,7 @@ class PreDetailViewController : UIViewController,  UITableViewDelegate, UITableV
     // MARK: - UITableViewDataSource
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if(indexPath.row == 0) {
+        if(indexPath.row == TABLE_CELL_00_APP_TITLE) {
             let cell = tableView.dequeueReusableCell(withIdentifier: "UITableViewItemCell01", for: indexPath) as! UITableViewItemCell01
             cell.selectionStyle = .none
             guard let artworkUrl100 = self.dataAppInfo?["artworkUrl100"] as? String,
@@ -81,12 +117,10 @@ class PreDetailViewController : UIViewController,  UITableViewDelegate, UITableV
             
             cell.appid = self.appID
             DispatchQueue.main.async() { () -> Void in
-                let string01 : NSAttributedString = NSAttributedString(string: trackCensoredName, attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 14)])
-                let space : NSAttributedString = NSAttributedString(string: "\n", attributes:nil)
+                let string01 : NSAttributedString = NSAttributedString(string: trackCensoredName + "\n", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 14)])
                 let string02 : NSAttributedString = NSAttributedString(string: artistName, attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 12)])
                 let containString : NSMutableAttributedString = NSMutableAttributedString.init()
                 containString.append(string01)
-                containString.append(space)
                 containString.append(string02)
                 cell.labelAppTitle.attributedText = containString
             }
@@ -108,7 +142,7 @@ class PreDetailViewController : UIViewController,  UITableViewDelegate, UITableV
             })
             
             return cell
-        } else if(indexPath.row == 1) {
+        } else if(indexPath.row == TABLE_CELL_01_APP_SCREENSHOTS) {
             let cell = tableView.dequeueReusableCell(withIdentifier: "UITableViewItemCell02", for: indexPath) as! UITableViewItemCell02
             guard let screenshotUrls = self.dataAppInfo?["screenshotUrls"] as? [String]
                 else {
@@ -116,7 +150,6 @@ class PreDetailViewController : UIViewController,  UITableViewDelegate, UITableV
             }
             
             cell.scrollViewAppScreenShots.contentSize = CGSize(width: 200 * screenshotUrls.count, height: 350)
-            
             for i in 0  ..< screenshotUrls.count {
                 self.dataManager.requestDataFromURL(urlString: screenshotUrls[i], successClosure: {
                     (data) in
@@ -140,7 +173,7 @@ class PreDetailViewController : UIViewController,  UITableViewDelegate, UITableV
             }
 
             return cell
-        } else if(indexPath.row == 2) {
+        } else if(indexPath.row == TABLE_CELL_02_APP_DESCRIPTION) {
             let cell = tableView.dequeueReusableCell(withIdentifier: "UITableViewItemCell03", for: indexPath) as! UITableViewItemCell03
 
             guard let description = self.dataAppInfo?["description"] as? String
@@ -150,22 +183,18 @@ class PreDetailViewController : UIViewController,  UITableViewDelegate, UITableV
             cell.selectionStyle = .none
             
             DispatchQueue.main.async() { () -> Void in
-                let string01 : NSAttributedString = NSAttributedString(string:"설명", attributes: [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 14)])
-                let space : NSAttributedString = NSAttributedString(string: "\n", attributes:nil)
-                let string02 : NSAttributedString = NSAttributedString(string: description, attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 12)])
-                let containString : NSMutableAttributedString = NSMutableAttributedString.init()
-                containString.append(string01)
-                containString.append(space)
-                containString.append(space)
-                containString.append(string02)
+                cell.labelTitle.text = "설명"
+                cell.labelDescription.text = description
+                cell.labelDescription.sizeToFit()
                 
-                cell.labelInfo.sizeToFit()
-                cell.labelInfo.attributedText = containString
+                let size : CGSize = (description as NSString).size(attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: self.FONT_SIZE)])
+                cell.labelDescription.frame(forAlignmentRect: CGRect(x: cell.labelDescription.frame.origin.x, y: cell.labelDescription.frame.origin.y, width: cell.labelDescription.frame.width, height: size.height))
                 
+                self.heightOpenSelectedCell02 = cell.labelTitle.frame.height + size.height
             }
 
             return cell
-        } else if(indexPath.row == 3) {
+        } else if(indexPath.row == TABLE_CELL_03_APP_RELEASENOTES) {
             let cell = tableView.dequeueReusableCell(withIdentifier: "UITableViewItemCell03", for: indexPath) as! UITableViewItemCell03
             
             guard let releaseNotes = self.dataAppInfo?["releaseNotes"] as? String,
@@ -173,89 +202,149 @@ class PreDetailViewController : UIViewController,  UITableViewDelegate, UITableV
                 else {
                     return cell
             }
+            let formatter = DateFormatter()
+            formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z"
+            let date : Date = formatter.date(from: currentVersionReleaseDate)!
+            formatter.dateFormat = "yyyy/MM/dd"
+            let dateString : String = formatter.string(from: date)
             
             cell.selectionStyle = .none
 
             DispatchQueue.main.async() { () -> Void in
-                let string01 : NSAttributedString = NSAttributedString(string:"새로운 기능", attributes: [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 14)])
-                let space : NSAttributedString = NSAttributedString(string: "\n", attributes:nil)
-                let string02 : NSAttributedString = NSAttributedString(string: releaseNotes, attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 12)])
+                cell.labelTitle.text = "새로운 기능"
+                let description : String = dateString + "\n\n" + releaseNotes
+                cell.labelDescription.text = description
+                cell.labelDescription.sizeToFit()
+                
+                let size : CGSize = (description as NSString).size(attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: self.FONT_SIZE)])
+                cell.labelDescription.frame(forAlignmentRect: CGRect(x: cell.labelDescription.frame.origin.x, y: cell.labelDescription.frame.origin.y, width: cell.labelDescription.frame.width, height: size.height))
+                self.heightOpenSelectedCell03 = cell.labelTitle.frame.height + size.height
+            }
+            return cell
+        } else if (indexPath.row == TABLE_CELL_04_APP_INFO){
+            let cell = tableView.dequeueReusableCell(withIdentifier: "UITableViewItemCell04", for: indexPath) as! UITableViewItemCell04
+            guard let artistName = self.dataAppInfo?["artistName"] as? String,
+                let genres = self.dataAppInfo?["genres"] as? [String],
+                let currentVersionReleaseDate = self.dataAppInfo?["currentVersionReleaseDate"] as? String,
+                let version = self.dataAppInfo?["version"] as? String,
+                let trackContentRating = self.dataAppInfo?["trackContentRating"] as? String,
+                let minimumOsVersion = self.dataAppInfo?["minimumOsVersion"] as? String,
+                let languageCodesISO2A = self.dataAppInfo?["languageCodesISO2A"] as? [String]
+                else {
+                    return cell
+            }
+             cell.selectionStyle = .none
+            
+            DispatchQueue.main.async() { () -> Void in
+                let string01 : NSAttributedString = NSAttributedString(string: "개발자  " + artistName + "\n\n", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 12)])
+                let string02 : NSAttributedString = NSAttributedString(string: "카테고리  " + genres[0] + "\n\n", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 12)])
+                
+                let formatter = DateFormatter()
+                formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z"
+                let date : Date = formatter.date(from: currentVersionReleaseDate)!
+                formatter.dateFormat = "yyyy/MM/dd"
+                let dateString : String = formatter.string(from: date)
+                
+                let string03 : NSAttributedString = NSAttributedString(string: "업데이트  " + dateString + "\n\n", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 12)])
+                let string04 : NSAttributedString = NSAttributedString(string: "버전  " + version + "\n\n", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 12)])
+                let string05 : NSAttributedString = NSAttributedString(string: "등급  " + trackContentRating + "\n\n", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 12)])
+                let string06 : NSAttributedString = NSAttributedString(string: "호환성  iOS " + minimumOsVersion + " 버전 이상이 필요\n\n", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 12)])
+                
+                var language : String = ""
+                for languageCode in languageCodesISO2A {
+                    if (languageCode == "EN") {
+                        language +=  "영어"
+                    } else if (languageCode == "KO") {
+                        language +=  "한글"
+                    }
+                    language += " "
+                }
+                
+                let string07 : NSAttributedString = NSAttributedString(string: "언어  " + language, attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 12)])
+                
                 let containString : NSMutableAttributedString = NSMutableAttributedString.init()
                 containString.append(string01)
-                containString.append(space)
-                containString.append(space)
                 containString.append(string02)
+                containString.append(string03)
+                containString.append(string04)
+                containString.append(string05)
+                containString.append(string06)
+                containString.append(string07)
                 
-                cell.labelInfo.sizeToFit()
-                cell.labelInfo.attributedText = containString
+                cell.labelDescription.attributedText = containString
+                cell.labelDescription.sizeToFit()
             }
+            return cell
+        } else if(indexPath.row == TABLE_CELL_05_APP_DEVELOPER_WEBSITE) {
+            let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "cell")
+            cell.accessoryType = .disclosureIndicator
+            cell.textLabel?.text = "개발자 웹사이트"
+            return cell
+        } else if(indexPath.row == TABLE_CELL_06_APP_COPYRIGHT) {
+            let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "cell")
+            guard let sellerName = self.dataAppInfo?["sellerName"] as? String
+                else {
+                    return cell
+            }
+            cell.selectionStyle = .none
+            let string01 : NSAttributedString = NSAttributedString(string: sellerName, attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 12)])
+            cell.textLabel?.attributedText = string01
             return cell
         } else {
             let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "cell")
-            
             return cell
         }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 9
+        return 7
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        print("heightForRowAt: \(indexPath.row)")
-        if(indexPath.row == 0) {
+        if(indexPath.row == TABLE_CELL_00_APP_TITLE) {
             return 125
-        } else if (indexPath.row == 1) {
-            return 350
-        } else if (indexPath.row == 2) {
+        } else if (indexPath.row == TABLE_CELL_01_APP_SCREENSHOTS) {
+            return 370
+        } else if (indexPath.row == TABLE_CELL_02_APP_DESCRIPTION) {
             return self.heightSelectedCell02
-        } else if (indexPath.row == 3) {
+        } else if (indexPath.row == TABLE_CELL_03_APP_RELEASENOTES) {
             return self.heightSelectedCell03
-        }else {
-            return 125
+        } else if (indexPath.row == TABLE_CELL_04_APP_INFO) {
+            return 260
+        } else {
+            return 50
         }
     }
     
     // MARK: - UITableViewDelegate
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
-        if (indexPath.row == 2) {
-            let cell = tableView.cellForRow(at: indexPath) as! UITableViewItemCell03
-            if(cell.labelInfo.frame.height > self.heightSelectedCell02) {
-                if(!cell.isTapCell) {
-                    self.heightSelectedCell02 = cell.labelInfo.frame.height + 50
-                    self.tableView.reloadRows(at: [indexPath], with: .none)
-                    cell.isTapCell = true
-                }
-            } 
-        } else if (indexPath.row == 3) {
-            let cell = tableView.cellForRow(at: indexPath) as! UITableViewItemCell03
-            if(cell.labelInfo.frame.height > self.heightSelectedCell03) {
-                if(!cell.isTapCell) {
-                    self.heightSelectedCell03 = cell.labelInfo.frame.height + 50
-                    self.tableView.reloadRows(at: [indexPath], with: .none)
-                    cell.isTapCell = true
+        if (indexPath.row == TABLE_CELL_02_APP_DESCRIPTION) {
+            if(self.heightOpenSelectedCell02 > self.heightSelectedCell02) {
+                self.heightSelectedCell02 = self.heightOpenSelectedCell02 + 50
+                DispatchQueue.main.async() { () -> Void in
+                    self.tableView.reloadRows(at: [indexPath], with: .fade)
                 }
             }
+        } else if (indexPath.row == TABLE_CELL_03_APP_RELEASENOTES) {
+            if(self.heightOpenSelectedCell03 > self.heightSelectedCell03) {
+                self.heightSelectedCell03 = self.heightOpenSelectedCell03 + 50
+                DispatchQueue.main.async() { () -> Void in
+                    self.tableView.reloadRows(at: [indexPath], with: .fade)
+                }
+            }
+        } else if (indexPath.row == TABLE_CELL_05_APP_DEVELOPER_WEBSITE) {
+            guard let sellerUrl = self.dataAppInfo?["sellerUrl"] as? String
+                else {
+                    return
+            }
+            let url :URL = URL(string : sellerUrl)!
+            UIApplication.shared.openURL(url)
         }
     }
-    
-    func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
-//        print("タップされたセルのindex番号: \(indexPath.row)")
-    }
-    
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-//        print("willDisplay : \(indexPath.row)")
-    }
-    
-    func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-//        print("didEndDisplaying : \(indexPath.row)")
-    }
-
-    
 }
 
+// MARK: - Custom UITableViewCell
 class UITableViewItemCell01: UITableViewCell {
     @IBOutlet weak var imageAppIcon: UIImageView!
     @IBOutlet var labelAppTitle: UILabel!
@@ -273,6 +362,13 @@ class UITableViewItemCell02: UITableViewCell {
 }
 
 class UITableViewItemCell03: UITableViewCell {
-    @IBOutlet var labelInfo: UILabel!
-    var isTapCell : Bool = false
+    @IBOutlet var labelTitle: UILabel!
+    @IBOutlet weak var labelDescription: UILabel!
+    var canOpenCell : Bool = false
+    
+}
+
+class UITableViewItemCell04: UITableViewCell {
+    @IBOutlet weak var labelDescription: UILabel!
+    
 }

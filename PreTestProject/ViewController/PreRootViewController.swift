@@ -16,6 +16,7 @@ class PreRootViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     @IBOutlet weak var navigationItems: UINavigationItem!
     @IBOutlet var tableView: UITableView!
+    var indicator: UIActivityIndicatorView!
     
     var naviTitle : String?
     var tableItems : [Any] = []
@@ -23,6 +24,7 @@ class PreRootViewController: UIViewController, UITableViewDelegate, UITableViewD
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        initIndicator()
         self.dataManager = DataManager.init()
         loadData()
     }
@@ -32,9 +34,29 @@ class PreRootViewController: UIViewController, UITableViewDelegate, UITableViewD
         // Dispose of any resources that can be recreated.
     }
     
-    // MARK: - 금융카테고리 50위 까지 리스트 호출
+    // MARK: - IndicatorView init
+    func initIndicator() {
+        self.indicator = UIActivityIndicatorView()
+        self.indicator.frame = CGRect(x: 0, y: 0, width: 50, height: 50)
+        self.indicator.center = self.view.center
+        self.indicator.hidesWhenStopped = true
+        self.indicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.gray
+        self.view.addSubview(self.indicator)
+    }
     
+    // MARK: - IndicatorView animating start
+    func startIndicator() {
+        self.indicator.startAnimating()
+    }
+    
+    // MARK: - IndicatorView animating stop
+    func stopIndicator() {
+        self.indicator.stopAnimating()
+    }
+    
+    // MARK: - 금융카테고리 50위 까지 리스트 호출
     func loadData() {
+        startIndicator()
         self.dataManager.requestJsonDataFromURL(urlString:self.requestListInfoURL, successClosure: {
             (data) in
             guard let feed = data?["feed"] as? [String:Any],
@@ -49,8 +71,8 @@ class PreRootViewController: UIViewController, UITableViewDelegate, UITableViewD
             DispatchQueue.main.async() { () -> Void in
                 self.navigationItems.title = self.naviTitle
                 self.tableView.reloadData()
+                self.stopIndicator()
             }
-                                            
         }, faileClosure:{
             (errorString) in
             let alert = UIAlertController(title:"에러발생!", message:errorString, preferredStyle: UIAlertControllerStyle.alert)
@@ -61,6 +83,7 @@ class PreRootViewController: UIViewController, UITableViewDelegate, UITableViewD
             alert.addAction(action)
             DispatchQueue.main.async() { () -> Void in
                 self.present(alert, animated: true, completion: nil)
+                self.stopIndicator()
             }
         })
     }
@@ -81,7 +104,6 @@ class PreRootViewController: UIViewController, UITableViewDelegate, UITableViewD
             else {
                 return cell
         }
-
         
         cell.itemTitle.text = label
         self.dataManager.requestDataFromURL(urlString: urlImage, successClosure: {
@@ -96,7 +118,7 @@ class PreRootViewController: UIViewController, UITableViewDelegate, UITableViewD
 
         }, faileClosure: {
             (errorString) in
-            print(errorString)
+            
             
         })
 
@@ -109,28 +131,25 @@ class PreRootViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     // MARK: - UITableViewDelegate
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        print("タップされたセルのindex番号: \(indexPath.row)")
-    }
-    
-    func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
-//        print("タップされたアクセサリがあるセルのindex番号: \(indexPath.row)")
-    }
-    
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        print("willDisplay : \(indexPath.row)")
-    }
-    
-    func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        print("didEndDisplaying : \(indexPath.row)")
-    }
+//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+//
+//    }
+//    
+//    func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
+//
+//    }
+//    
+//    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+//        
+//    }
+//    
+//    func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+//        
+//    }
     
     // MARK: - segue prepare method
-    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if (segue.identifier == self.detailInfoSegueIdentifier) {
-            
             guard let item = self.tableItems[(self.tableView.indexPathForSelectedRow?.row)!] as? [String : Any],
                 let id = item["id"] as? [String:Any],
                 let attributes = id["attributes"] as? [String:Any],
@@ -138,7 +157,6 @@ class PreRootViewController: UIViewController, UITableViewDelegate, UITableViewD
                 else {
                     return
             }
-            
             let destination = segue.destination as? PreDetailViewController
             destination?.appID = appID;
         }
